@@ -15,6 +15,11 @@ namespace IsoHexEditor
 
         // Tracks the yaw and pitch of the camera
         Quaternion quatRotation = Quaternion.Identity;
+        public Quaternion Rotation
+        {
+            get { return quatRotation; }
+            set { quatRotation = value; }
+        }
 
         // Where the camera is
         Vector3 cameraPosition;
@@ -51,7 +56,7 @@ namespace IsoHexEditor
         /// Creates a new Camera to view the map
         /// </summary>
         /// <param name="aspectRatio">The camera needs to know the aspect ratio from the graphics device.</param>
-        public Camera(float aspectRatio )
+        public Camera(float aspectRatio)
         {
             //Mouse.SetPosition(viewWidth, viewHeight);
             originalMouseState = Mouse.GetState();

@@ -19,3 +19,10 @@ C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\IsoHexEditor\
 C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\IsoHexEditor\ContentLibrary\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\IsoHexEditor\ContentLibrary\obj\x86\Debug\ContentLibrary.dll
 C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\IsoHexEditor\ContentLibrary\obj\x86\Debug\ContentLibrary.pdb
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\bin\x86\Debug\Content\hudFont.xnb
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\bin\x86\Debug\ContentLibrary.dll
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\bin\x86\Debug\ContentLibrary.pdb
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\obj\x86\Debug\ContentLibrary.dll
+C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\ContentLibrary\obj\x86\Debug\ContentLibrary.pdb

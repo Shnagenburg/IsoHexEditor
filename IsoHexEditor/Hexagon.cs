@@ -127,7 +127,7 @@ namespace IsoHexEditor
         }
 
         private Matrix CreateTranslationForHexGrid(int xOffset, int yOffset)
-        {
+        {            
             return Matrix.CreateTranslation(  xOffset * 2 , xOffset % 2 == 0 ? (yOffset * 3) - 1.5f : yOffset * 3, 0);
         }
 

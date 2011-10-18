@@ -47,7 +47,7 @@ namespace IsoHexEditor
             IsDrawingWireFrame = true;
 
             // Create a Vector Direction Marker
-            vectorDirMarker = new VectorDirectionMarker();
+            vectorDirMarker = new VectorDirectionMarker(GraphicsDevice.Viewport.AspectRatio);
 
             // Create a hextube
             hexTube = new HexTube();
@@ -82,6 +82,7 @@ namespace IsoHexEditor
             MouseState currentMouseState = Mouse.GetState();
 
             camera.Update(timer, currentMouseState);
+            vectorDirMarker.Rotation = camera.Rotation;
             timer.Restart();
             
             
