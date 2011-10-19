@@ -116,6 +116,7 @@ namespace IsoHexEditor
             // 
             // isoHexControl
             // 
+            this.isoHexControl.HexGrid = null;
             this.isoHexControl.Location = new System.Drawing.Point(12, 106);
             this.isoHexControl.Name = "isoHexControl";
             this.isoHexControl.Size = new System.Drawing.Size(768, 455);
@@ -161,6 +162,7 @@ namespace IsoHexEditor
             this.Controls.Add(this.vertexColor1);
             this.Name = "MainForm";
             this.Text = "IsoHexEditor";
+            this.LocationChanged += new System.EventHandler(this.EditorWindowLocation_Changed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace IsoHexEditor
 {
@@ -9,6 +12,10 @@ namespace IsoHexEditor
     {
         public const int DEFAULT_MAP_WIDTH = 10;
         public const int DEFAULT_MAP_HEIGHT = 10;
+
+        // temp
+        static Ray globalRay;
+
 
         /// <summary>
         /// Randomly sets the depths of all the hexes in the grid.
@@ -19,7 +26,7 @@ namespace IsoHexEditor
         static public void GenerateNoise(HexGrid grid, int min, int max, int smoothness)
         {
             Hexagon[,] mGrid = grid.Grid;
-
+            
             Random rand = new Random();
             for (int i = 0; i < DEFAULT_MAP_WIDTH; i++)
             {
@@ -109,6 +116,73 @@ namespace IsoHexEditor
             }
 
             return surrounding;
+        }
+
+        
+        // REVIST fix magic numbers
+        static public Hexagon SelectHexagon(GraphicsDevice device, Effect effect, HexGrid hexGrid, int mouseX, int mouseY, Matrix viewMatrix, Matrix projectionMatrix)
+        {
+            Vector3 nearsource = new Vector3((float)mouseX - 20, (float)mouseY - 150, 0f);
+            Vector3 farsource = new Vector3((float)mouseX - 20, (float)mouseY - 150, 1f);
+
+            Matrix world = Matrix.Identity;
+
+            Vector3 nearPoint = device.Viewport.Unproject(nearsource, projectionMatrix, viewMatrix, world);
+
+            Vector3 farPoint = device.Viewport.Unproject(farsource, projectionMatrix, viewMatrix, world);
+
+            // Create a ray from the near clip plane to the far clip plane.
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+
+            Ray pickRay = new Ray(nearPoint, direction);
+            globalRay = pickRay;
+            for (int i = 0; i < DEFAULT_MAP_WIDTH; i++)
+            {
+                for (int j = 0; j < DEFAULT_MAP_HEIGHT; j++)
+                {
+                    hexGrid.Grid[i, j].SetBoundingXY(i, j);
+
+                    if (hexGrid.Grid[i, j].BoundingSphere.Intersects(pickRay) != null)
+                    {
+                        hexGrid.Grid[i, j].SetColorScheme(Color.Blue, Color.Blue);
+                        return hexGrid.Grid[i, j];
+                    }
+                }
+            }                      
+
+
+            return null;
+            
+        }
+
+
+        static private Matrix CreateTranslationForHexGrid(int xOffset, int yOffset)
+        {
+            return Matrix.CreateTranslation(xOffset * 2, xOffset % 2 == 0 ? (yOffset * 3) - 1.5f : yOffset * 3, 0);
+        }
+
+        static public void DrawRay(GraphicsDevice device, Effect effect)
+        {
+            VertexPositionColor[] rayVerts = new VertexPositionColor[2];
+            rayVerts[0].Position = globalRay.Position;
+            rayVerts[1].Position = globalRay.Position + (globalRay.Direction * 30);
+            short[] rayIndicies = { 0, 1 };
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                device.DrawUserIndexedPrimitives<VertexPositionColor>(
+                    PrimitiveType.LineList,
+                    rayVerts,
+                    0,  // vertex buffer offset to add to each element of the index buffer
+                    2,  // number of vertices in pointList
+                    rayIndicies,  // the index buffer
+                    0,  // first index element to read
+                    1,
+                    VertexPositionColor.VertexDeclaration // number of primitives to draw
+                    );
+            }
+
         }
     }
 }

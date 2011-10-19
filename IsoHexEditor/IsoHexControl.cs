@@ -1,9 +1,12 @@
 ﻿#region Using Statements
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using SysWinForms = System.Windows.Forms;
 #endregion
 
 
@@ -11,6 +14,9 @@ namespace IsoHexEditor
 {
     class IsoHexControl : GraphicsDeviceControl
     {
+        // The top right point of where the editor window is
+        public Point WindowLocation;
+
         VectorDirectionMarker vectorDirMarker;
         HexTube hexTube;
         HexGrid hexGrid;
@@ -26,8 +32,8 @@ namespace IsoHexEditor
 
         public bool IsDrawingWireFrame;
         public bool IsDrawingModels;
-
         
+     
 
         // Vertex positions and colors used to display a spinning triangle.
         public readonly VertexPositionColor[] Vertices =
@@ -81,10 +87,18 @@ namespace IsoHexEditor
         {
             MouseState currentMouseState = Mouse.GetState();
 
+            int fixedX = currentMouseState.X - WindowLocation.X;
+            int fixedY = currentMouseState.Y - WindowLocation.Y;
+
+
             camera.Update(timer, currentMouseState);
+            if (currentMouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                HexHelper.SelectHexagon(GraphicsDevice, effect, hexGrid, fixedX, fixedY, camera.ViewMatrix, effect.Projection);
+                Console.WriteLine(fixedX + " " + fixedY);
+            }
             vectorDirMarker.Rotation = camera.Rotation;
-            timer.Restart();
-            
+            timer.Restart();           
             
         }
 
@@ -129,6 +143,8 @@ namespace IsoHexEditor
 
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
                                               Vertices, 0, 1);
+
+            HexHelper.DrawRay(GraphicsDevice, effect);
              
             if (IsDrawingModels)
                 hexGrid.Draw(GraphicsDevice, effect);
@@ -143,6 +159,8 @@ namespace IsoHexEditor
 
             //hexTube.Draw(GraphicsDevice, effect, 0, 0);
             //hexTube.DrawWireFrame(GraphicsDevice, effect, 0, 0);
+
+            
         }
     }
 }

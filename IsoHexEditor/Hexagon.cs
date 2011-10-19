@@ -13,6 +13,14 @@ namespace IsoHexEditor
         const int HEX_WIDTH = 1;
         const int HEX_HEIGHT = 1;
 
+        BoundingSphere mBoundingSphere;
+        public BoundingSphere BoundingSphere
+        {
+            get { return mBoundingSphere; }
+            set { mBoundingSphere = value; }
+        }
+
+
         // The depth (z-value) of the hexagon.
         float fDepth;
         public float Depth
@@ -24,6 +32,7 @@ namespace IsoHexEditor
                 SetUpVerts(fDepth);
                 mHexTube.Depth = value;
 
+                mBoundingSphere.Center.Z = value;
             }
         }
         
@@ -48,6 +57,11 @@ namespace IsoHexEditor
             SetUpVerts(DEFAULT_DEPTH);
             SetUpIndicies();
             SetColorScheme(mColor1, mColor2);
+
+            // Average the two sides of the hex to get the center of the sphere
+            mBoundingSphere = new BoundingSphere(
+                (vertices[2].Position + vertices[5].Position) / 2.0f,
+                HEX_WIDTH);
         }
 
 
@@ -140,6 +154,13 @@ namespace IsoHexEditor
         {
             vertices[index].Position.Z = depth;
             mHexTube.SetVertexDepth(index, depth);
+        }
+
+        public void SetBoundingXY(int xOffset, int yOffset)
+        {
+            mBoundingSphere.Center.X = xOffset * 2;
+            mBoundingSphere.Center.Y = xOffset % 2 == 0 ? (yOffset * 3) - 1.5f : yOffset * 3;
+            mBoundingSphere.Center.Y += 1.5f;
         }
     }
 }

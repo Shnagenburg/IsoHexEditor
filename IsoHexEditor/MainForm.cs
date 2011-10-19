@@ -8,7 +8,9 @@
 #endregion
 
 #region Using Statements
+using System;
 using System.Windows.Forms;
+using Microsoft.Xna.Framework.Graphics;
 #endregion
 
 namespace IsoHexEditor
@@ -33,6 +35,12 @@ namespace IsoHexEditor
             vertexColor1.SelectedIndex = 1;
             vertexColor2.SelectedIndex = 2;
             vertexColor3.SelectedIndex = 4;
+
+            //isoHexControl.WindowLocation = new Microsoft.Xna.Framework.Point(this.Location.Y, this.Location.Y);
+            isoHexControl.WindowLocation.X = this.Location.X;
+            isoHexControl.WindowLocation.Y = this.Location.Y;
+
+        
         }
 
 
@@ -64,7 +72,16 @@ namespace IsoHexEditor
             XnaColor xnaColor = new XnaColor(gdiColor.R, gdiColor.G, gdiColor.B);
 
             // Update the spinning triangle control with the new color.
-            isoHexControl.Vertices[vertexIndex].Color = xnaColor;
+            isoHexControl.Vertices[vertexIndex].Color = xnaColor;            
+        }
+
+        void EditorWindowLocation_Changed(object sender, System.EventArgs e)
+        {
+            isoHexControl.WindowLocation.X = this.Location.X;
+            isoHexControl.WindowLocation.Y = this.Location.Y;
+
+            Console.WriteLine(isoHexControl.Location.X + " " + isoHexControl.Location.Y);
+
         }
 
         /// <summary>

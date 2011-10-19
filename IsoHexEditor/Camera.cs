@@ -147,7 +147,7 @@ namespace IsoHexEditor
 
             Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, Matrix.CreateFromQuaternion(quatRotation));
             cameraLookAtPt = cameraFinalTarget;
-            mViewMatrix = Matrix.CreateLookAt(cameraPosition, cameraFinalTarget, cameraRotatedUpVector);
+            mViewMatrix = Matrix.CreateLookAt(cameraPosition, cameraFinalTarget, cameraRotatedUpVector); // This sets free cam vs CS cam
         }
 
         
