@@ -1,5 +1,0 @@
-C:\Users\Daniel\Downloads\WinFormsGraphicsSample_4_0\WinFormsGraphicsDevice\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\WinFormsGraphicsDevice\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditor\IsoHexEditor\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Daniel\Documents\Visual Studio 2010\Projects\IsoHexEditorGit\IsoHexEditor\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Puchie\Documents\src\IsoHexEditor\IsoHexEditor\Content\obj\x86\Debug\ResolveAssemblyReference.cache
