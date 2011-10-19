@@ -1,0 +1,10 @@
+
+*.suo
+/IsoHexEditor/bin
+/IsoHexEditor/obj
+*.user
+/IsoHexEditor/Content/bin
+/IsoHexEditor/Content/obj
+/IsoHexEditor/ContentLibrary/bin
+/IsoHexEditor/ContentLibrary/obj
+*.cachefile
