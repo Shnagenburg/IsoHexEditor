@@ -12,8 +12,14 @@ using SysWinForms = System.Windows.Forms;
 
 namespace IsoHexEditor
 {
+    /// <summary>
+    /// This is the window that holds our XNA stuff.
+    /// </summary>
     class IsoHexControl : GraphicsDeviceControl
     {
+        // Links to form controls
+        public System.Windows.Forms.TextBox tbDepth;
+
         // The top right point of where the editor window is
         public Point WindowLocation;
 
@@ -25,7 +31,14 @@ namespace IsoHexEditor
             get {return hexGrid;}
             set {hexGrid = value;}
         }
-        Hexagon hex;
+
+        private Hexagon mSelectedHex;
+        public Hexagon SelectedHex
+        {
+            get { return mSelectedHex; }
+            set { mSelectedHex = value; }
+        }
+
         BasicEffect effect;
         Stopwatch timer;
         Camera camera;
@@ -33,7 +46,7 @@ namespace IsoHexEditor
         public bool IsDrawingWireFrame;
         public bool IsDrawingModels;
         
-     
+        MouseState mPreviousMouseState;
 
         // Vertex positions and colors used to display a spinning triangle.
         public readonly VertexPositionColor[] Vertices =
@@ -49,6 +62,8 @@ namespace IsoHexEditor
         /// </summary>
         protected override void Initialize()
         {
+            mPreviousMouseState = Mouse.GetState();
+
             IsDrawingModels = true;
             IsDrawingWireFrame = true;
 
@@ -60,20 +75,18 @@ namespace IsoHexEditor
 
             // Create a hexgrid
             hexGrid = new HexGrid();
-            HexHelper.GenerateNoise(hexGrid, 0, 20, 5);
+            HexHelper.GenerateNoise(hexGrid, 0, 3);
             //hexGrid.SmoothHexesDown();
             //hexGrid.SetColorSchemeAll(Color.DarkSeaGreen, Color.DarkOrchid);
-            hexGrid.ClusterColor(1, 4);
-
-            // Create a hex
-            hex = new Hexagon();
-
+            hexGrid.ClusterColor(1, 4, Color.Red, Color.Pink);
+            
             // Create our camera.
             camera = new Camera(GraphicsDevice.Viewport.AspectRatio);
 
             // Create our effect.
             effect = new BasicEffect(GraphicsDevice);
 
+            // Enable to allow color
             effect.VertexColorEnabled = true;
 
             // Start the animation timer.
@@ -85,26 +98,33 @@ namespace IsoHexEditor
 
         protected void Update()
         {
+            // The mouse state gets the mouse location based on where the mouse is on the desktop.
+            // We need to offset it by where the window is. How crazy is that?
             MouseState currentMouseState = Mouse.GetState();
 
             int fixedX = currentMouseState.X - WindowLocation.X;
             int fixedY = currentMouseState.Y - WindowLocation.Y;
 
+            // The camera works by examining the changes in mouse location, so it doesnt 
+            // need to be offset here.
+            camera.Update(timer, currentMouseState, mPreviousMouseState);
 
-            camera.Update(timer, currentMouseState);
+            // Check to see if we clicked on a hex
             if (currentMouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                HexHelper.SelectHexagon(GraphicsDevice, effect, hexGrid, fixedX, fixedY, camera.ViewMatrix, effect.Projection);
-                Console.WriteLine(fixedX + " " + fixedY);
+                Hexagon newHex = HexHelper.SelectHexagon(GraphicsDevice, hexGrid, fixedX, fixedY, camera.ViewMatrix, effect.Projection, camera.Position);
+                if (newHex != null)
+                    HexSelected(newHex);
             }
-            vectorDirMarker.Rotation = camera.Rotation;
-            timer.Restart();           
             
-        }
+            // Update the orthomarker
+            vectorDirMarker.Rotation = camera.Rotation;
 
-        private void HandleInput()
-        {
+            // Reset the timer
+            timer.Restart();
 
+            mPreviousMouseState = currentMouseState;
+            
         }
 
         /// <summary>
@@ -115,23 +135,8 @@ namespace IsoHexEditor
             Update();
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // Spin the triangle according to how much time has passed.
-            float time = (float)timer.Elapsed.TotalSeconds;
-
-            //float yaw = time * 0.7f;
-            //float pitch = time * 0.8f;
-            //float roll = time * 0.9f;
-
-            // Set transform matrices.
-            float aspect = GraphicsDevice.Viewport.AspectRatio;
-
-            effect.World = Matrix.Identity; //Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-
-            //effect.View = Matrix.CreateLookAt(new Vector3(0, 0, -5),
-            //                                Vector3.Zero, Vector3.Up);
-            //effect.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, 1, 10);
-
+            
+            effect.World = Matrix.Identity;
             effect.View = camera.ViewMatrix;
             effect.Projection = camera.ProjectionMatrix;
 
@@ -154,13 +159,21 @@ namespace IsoHexEditor
 
             vectorDirMarker.Draw(GraphicsDevice, effect);
 
-            //hex.Draw(GraphicsDevice, effect, 0, 0);
-            //hex.DrawWireFrame(GraphicsDevice, effect, 0, 0);
-
             //hexTube.Draw(GraphicsDevice, effect, 0, 0);
             //hexTube.DrawWireFrame(GraphicsDevice, effect, 0, 0);
 
             
         }
+
+        private void HexSelected(Hexagon newHex)
+        {
+            if (mSelectedHex != null)
+                mSelectedHex.SetDefaultColorScheme();
+            newHex.SetSelectedColorScheme();
+            mSelectedHex = newHex;
+
+            tbDepth.Text = mSelectedHex.Depth.ToString();
+        }
+        
     }
 }

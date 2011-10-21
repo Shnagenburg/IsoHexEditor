@@ -31,9 +31,11 @@ namespace IsoHexEditor
             this.vertexColor3 = new System.Windows.Forms.ComboBox();
             this.vertexColor2 = new System.Windows.Forms.ComboBox();
             this.vertexColor1 = new System.Windows.Forms.ComboBox();
-            this.isoHexControl = new IsoHexEditor.IsoHexControl();
             this.chkDrawWireframe = new System.Windows.Forms.CheckBox();
             this.chkDrawModel = new System.Windows.Forms.CheckBox();
+            this.tbDepth = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.isoHexControl = new IsoHexEditor.IsoHexControl();
             this.SuspendLayout();
             // 
             // vertexColor3
@@ -114,15 +116,6 @@ namespace IsoHexEditor
             this.vertexColor1.TabIndex = 5;
             this.vertexColor1.SelectedIndexChanged += new System.EventHandler(this.vertexColor_SelectedIndexChanged);
             // 
-            // isoHexControl
-            // 
-            this.isoHexControl.HexGrid = null;
-            this.isoHexControl.Location = new System.Drawing.Point(12, 106);
-            this.isoHexControl.Name = "isoHexControl";
-            this.isoHexControl.Size = new System.Drawing.Size(768, 455);
-            this.isoHexControl.TabIndex = 8;
-            this.isoHexControl.Text = "isoHexControl";
-            // 
             // chkDrawWireframe
             // 
             this.chkDrawWireframe.AutoSize = true;
@@ -149,11 +142,40 @@ namespace IsoHexEditor
             this.chkDrawModel.UseVisualStyleBackColor = true;
             this.chkDrawModel.CheckedChanged += new System.EventHandler(this.chkDrawModel_Pressed);
             // 
+            // tbDepth
+            // 
+            this.tbDepth.Location = new System.Drawing.Point(74, 63);
+            this.tbDepth.Name = "tbDepth";
+            this.tbDepth.Size = new System.Drawing.Size(100, 20);
+            this.tbDepth.TabIndex = 11;
+            this.tbDepth.TextChanged += new System.EventHandler(this.tbDepth_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(29, 66);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Depth:";
+            // 
+            // isoHexControl
+            // 
+            this.isoHexControl.HexGrid = null;
+            this.isoHexControl.Location = new System.Drawing.Point(12, 106);
+            this.isoHexControl.Name = "isoHexControl";
+            this.isoHexControl.SelectedHex = null;
+            this.isoHexControl.Size = new System.Drawing.Size(768, 455);
+            this.isoHexControl.TabIndex = 8;
+            this.isoHexControl.Text = "isoHexControl";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(792, 573);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbDepth);
             this.Controls.Add(this.chkDrawModel);
             this.Controls.Add(this.chkDrawWireframe);
             this.Controls.Add(this.isoHexControl);
@@ -176,6 +198,8 @@ namespace IsoHexEditor
         private System.Windows.Forms.ComboBox vertexColor1;
         private System.Windows.Forms.CheckBox chkDrawWireframe;
         private System.Windows.Forms.CheckBox chkDrawModel;
+        private System.Windows.Forms.TextBox tbDepth;
+        private System.Windows.Forms.Label label1;
 
     }
 }

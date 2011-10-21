@@ -40,7 +40,7 @@ namespace IsoHexEditor
             isoHexControl.WindowLocation.X = this.Location.X;
             isoHexControl.WindowLocation.Y = this.Location.Y;
 
-        
+            isoHexControl.tbDepth = this.tbDepth;            
         }
 
 
@@ -75,6 +75,9 @@ namespace IsoHexEditor
             isoHexControl.Vertices[vertexIndex].Color = xnaColor;            
         }
 
+        /// <summary>
+        /// This method tells the form where it is on your desktop. Important for the raycasting.
+        /// </summary>
         void EditorWindowLocation_Changed(object sender, System.EventArgs e)
         {
             isoHexControl.WindowLocation.X = this.Location.X;
@@ -104,5 +107,34 @@ namespace IsoHexEditor
         {
             isoHexControl.IsDrawingModels = chkDrawModel.Checked;
         }
+
+        /// <summary>
+        /// Event for when the depth text field is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void tbDepth_TextChanged(object sender, System.EventArgs e)
+        {
+            // Check to see if the user is trying to move the camera with WASD
+            tbDepth.Text.ToLower();
+            if (tbDepth.Text.Contains("w") || tbDepth.Text.Contains("s")
+                || tbDepth.Text.Contains("a") || tbDepth.Text.Contains("d"))
+            {
+                tbDepth.Text = tbDepth.Text.Remove(tbDepth.Text.Length - 1); // Take off the text he added 
+                isoHexControl.Focus();
+            }
+
+            // The float parser might explode if they type fast enough
+            try
+            {
+                float f = float.Parse(tbDepth.Text);
+                isoHexControl.SelectedHex.Depth = float.Parse(tbDepth.Text);
+            }
+            catch (Exception except)
+            {
+                // Do nothing
+            }
+        }
+
     }
 }

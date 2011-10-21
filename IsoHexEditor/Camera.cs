@@ -7,13 +7,16 @@ using Microsoft.Xna.Framework.Input;
 // Made by Dan Fuller
 namespace IsoHexEditor
 {
+    /// <summary>
+    /// The camera controls the view and projection matrix of the world.
+    /// </summary>
     class Camera
     {
         // Move speed and turn speed of the camera
         const int MOVE_SPEED = 1;
         const float TURN_SPEED = 0.5f;
 
-        // Tracks the yaw and pitch of the camera
+        // Tracks the yaw, pitch, and roll of the camera
         Quaternion quatRotation = Quaternion.Identity;
         public Quaternion Rotation
         {
@@ -23,6 +26,13 @@ namespace IsoHexEditor
 
         // Where the camera is
         Vector3 cameraPosition;
+        /// <summary>
+        /// The position of the camera.
+        /// </summary>
+        public Vector3 Position
+        {
+            get { return cameraPosition; }
+        }
 
         // The inital direction of the camera
         Vector3 cameraOriginalTarget;
@@ -34,7 +44,6 @@ namespace IsoHexEditor
         Vector3 cameraLookAtPt;
 
         MouseState originalMouseState;
-        MouseState lastMouseState;
 
         // Position of the Camera, where it's looking, which way is up.
         private Matrix mViewMatrix;        
@@ -72,13 +81,14 @@ namespace IsoHexEditor
         }
 
         // Update the camera
-        public void Update(Stopwatch theTime, MouseState currentMouseState)
+        public void Update(Stopwatch theTime, MouseState currentMouseState, MouseState previousMouseState)
         {
             float time = (float)theTime.ElapsedTicks / 100000.0f;
-            ProcessInput(time, currentMouseState);            
+            ProcessInput(time, currentMouseState, previousMouseState);            
         }
         
-        private void ProcessInput(float amount, MouseState currentMouseState)
+        // Handle input for the camera
+        private void ProcessInput(float amount, MouseState currentMouseState, MouseState previousMouseState)
         {
             // Reset the vector and rotation
             Vector3 moveVector = Vector3.Zero;
@@ -87,15 +97,18 @@ namespace IsoHexEditor
 
 
             // This is when the user first clicks middle mouse, indicating they want to move the camera.
-            if (currentMouseState.MiddleButton == ButtonState.Pressed
-                && lastMouseState.MiddleButton == ButtonState.Released)
+            if (( currentMouseState.MiddleButton == ButtonState.Pressed
+                && previousMouseState.MiddleButton == ButtonState.Released)
+                || 
+                (currentMouseState.RightButton == ButtonState.Pressed
+                && previousMouseState.RightButton == ButtonState.Released))
             {
-                originalMouseState = currentMouseState;
-                
+                originalMouseState = currentMouseState;                
             }
 
             // Handles if the user is moving the mouse
-            if (currentMouseState != originalMouseState && currentMouseState.MiddleButton == ButtonState.Pressed)
+            if ( ( currentMouseState != originalMouseState && currentMouseState.MiddleButton == ButtonState.Pressed)
+                 || (currentMouseState != originalMouseState && currentMouseState.RightButton == ButtonState.Pressed) )
             {
                 float xDifference = currentMouseState.X - originalMouseState.X;
                 float yDifference = currentMouseState.Y - originalMouseState.Y;
@@ -122,12 +135,13 @@ namespace IsoHexEditor
             // Take our move and rotation and apply it to the camera.
             AddToCameraPosition(moveVector * amount, leftRightRot, upDownRot);
 
-            lastMouseState = currentMouseState;
+            previousMouseState = currentMouseState;
         }
 
         // Calculate the camera's new position
         private void AddToCameraPosition(Vector3 vectorToAdd, float leftRightRot, float upDownRot)
         {
+            // How much to change the camera's roll/pitch/yaw by
             Quaternion additionalRot = Quaternion.CreateFromYawPitchRoll(leftRightRot, upDownRot, 0.0f);
             //* Quaternion.CreateFromAxisAngle(new Vector3(1, 0, 0), upDownRot);
             quatRotation *= additionalRot;

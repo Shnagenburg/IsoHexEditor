@@ -7,15 +7,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace IsoHexEditor
 {
+    /// <summary>
+    /// The HexTube is the cylinder base for the hexagons.
+    /// </summary>
     class HexTube
     {
-        const int DEFFAULT_DEPTH = 0;
-        const int HEX_WIDTH = 1;
-        const int HEX_HEIGHT = 1;
+        const int DEFFAULT_DEPTH = Hexagon.DEFAULT_DEPTH;
+        const int HEX_WIDTH = Hexagon.HEX_WIDTH;
+        const int HEX_HEIGHT = Hexagon.HEX_HEIGHT;
 
         VertexPositionColor[] vertices = new VertexPositionColor[12];
 
         float fDepth;
+        /// <summary>
+        /// The Depth (z-value) of the tube
+        /// </summary>
         public float Depth
         {
             get { return fDepth; }
@@ -116,10 +122,10 @@ namespace IsoHexEditor
 
 
 
-
+        // These are all quite similar to hexagon.
         public void Draw(GraphicsDevice device, BasicEffect effect, int xOffset, int yOffset)
         {
-            effect.World = CreateTranslationForHexGrid(xOffset, yOffset);
+            effect.World = HexHelper.CreateTranslationForHexGrid(xOffset, yOffset);
 
             effect.CurrentTechnique.Passes[0].Apply();
             device.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 12, triangleStripIndices, 0, 12);
@@ -129,7 +135,7 @@ namespace IsoHexEditor
         {
             SetWireFrameColor();
 
-            effect.World = CreateTranslationForHexGrid(xOffset, yOffset);
+            effect.World = HexHelper.CreateTranslationForHexGrid(xOffset, yOffset);
 
             effect.CurrentTechnique.Passes[0].Apply();
             device.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices, 0, 12, lineListIndices, 0, 24);
@@ -151,11 +157,6 @@ namespace IsoHexEditor
             {
                 vertices[i].Color = Color.Red;
             }
-        }
-
-        private Matrix CreateTranslationForHexGrid(int xOffset, int yOffset)
-        {
-            return Matrix.CreateTranslation(xOffset * 2, xOffset % 2 == 0 ? (yOffset * 3) - 1.5f : yOffset * 3, 0);
         }
 
         public float GetVertexDepth(int index)

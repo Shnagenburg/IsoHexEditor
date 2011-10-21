@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace IsoHexEditor
 {
+    /// <summary>
+    /// This is the small orthogonal set of vectors in the bottom left corner.
+    /// </summary>
     class VectorDirectionMarker
     {
         VertexPositionColor[] orthoVertices = new VertexPositionColor[6];

@@ -7,22 +7,29 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace IsoHexEditor
 {
+    /// <summary>
+    /// A hexagon represents one tile of the map
+    /// </summary>
     class Hexagon
-    {
-        const int DEFAULT_DEPTH = 0;
-        const int HEX_WIDTH = 1;
-        const int HEX_HEIGHT = 1;
+    {        
+        public const int DEFAULT_DEPTH = 0;
+        public const int HEX_WIDTH = 1;
+        public const int HEX_HEIGHT = 1;
 
         BoundingSphere mBoundingSphere;
+        /// <summary>
+        /// The bounding sphere is set at the center of the hex to check for mouse selection.
+        /// </summary>
         public BoundingSphere BoundingSphere
         {
             get { return mBoundingSphere; }
             set { mBoundingSphere = value; }
         }
-
-
-        // The depth (z-value) of the hexagon.
+        
         float fDepth;
+        /// <summary>
+        /// The depth (z-value) of the hexagon. Positive numbers means a higher depth.
+        /// </summary>
         public float Depth
         {
             get { return fDepth; }
@@ -42,10 +49,12 @@ namespace IsoHexEditor
         // 6 Verticies in a hexagon
         VertexPositionColor[] vertices = new VertexPositionColor[6];
         
+        // How the strip and line list are drawn
         short[] triangleStripIndices;
         short[] lineListIndices;
 
         // The two Colors of the hexagon
+        // These will eventually become textures, I picked two for now just for testing.
         private Color mColor1;
         private Color mColor2;
 
@@ -58,10 +67,10 @@ namespace IsoHexEditor
             SetUpIndicies();
             SetColorScheme(mColor1, mColor2);
 
-            // Average the two sides of the hex to get the center of the sphere
-            mBoundingSphere = new BoundingSphere(
-                (vertices[2].Position + vertices[5].Position) / 2.0f,
-                HEX_WIDTH);
+            // Set the bounding sphere. It is shifted when
+            // the user clicks (since the hex doens't know where 
+            // it is) and when the depth is changed.
+            mBoundingSphere = new BoundingSphere(new Vector3(0, 0, DEFAULT_DEPTH), HEX_WIDTH + 0.5f);
         }
 
 
@@ -100,20 +109,35 @@ namespace IsoHexEditor
             };
         }
 
+        /// <summary>
+        /// Draws a hexagon
+        /// </summary>
+        /// <param name="device">The graphics device</param>
+        /// <param name="effect">The effect being used</param>
+        /// <param name="xOffset">The x position the hex is at in the grid</param>
+        /// <param name="yOffset">The y position the hex is at in the grid</param>
         public void Draw(GraphicsDevice device, BasicEffect effect, int xOffset, int yOffset)
         {
-            effect.World = CreateTranslationForHexGrid(xOffset, yOffset);
+            effect.World = HexHelper.CreateTranslationForHexGrid(xOffset, yOffset);
 
             effect.CurrentTechnique.Passes[0].Apply();
             device.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 6, triangleStripIndices, 0, 4);
             mHexTube.Draw(device, effect, xOffset, yOffset);
         }
 
+        /// <summary>
+        /// Draws a hexagon's wireframe. The wireframe is NOT all the actual triangles being drawn.
+        /// It is an outline of the hexagon.
+        /// </summary>
+        /// <param name="device">The graphics device</param>
+        /// <param name="effect">The effect being used</param>
+        /// <param name="xOffset">The x position the hex is at in the grid</param>
+        /// <param name="yOffset">The y position the hex is at in the grid</param>
         public void DrawWireFrame(GraphicsDevice device, BasicEffect effect, int xOffset, int yOffset)
         {
             SetWireFrameColor();
 
-            effect.World = CreateTranslationForHexGrid(xOffset, yOffset);
+            effect.World = HexHelper.CreateTranslationForHexGrid(xOffset, yOffset);
 
             effect.CurrentTechnique.Passes[0].Apply();
             device.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList, vertices, 0, 6, lineListIndices, 0, 6);
@@ -122,6 +146,9 @@ namespace IsoHexEditor
             SetColorScheme(mColor1, mColor2);
         }
 
+        /// <summary>
+        /// Change the colors of the hexagon.
+        /// </summary>
         public void SetColorScheme(Color color1, Color color2)
         {
             mColor1 = color1;
@@ -132,6 +159,27 @@ namespace IsoHexEditor
             }
         }
 
+        /// <summary>
+        /// Change the color of the hexagon to whatever we decide a hex thats not selected looks like.
+        /// Currently green
+        /// </summary>
+        public void SetDefaultColorScheme()
+        {
+            SetColorScheme(Color.Green, Color.DarkGreen);
+        }
+
+        /// <summary>
+        /// Change the color of the hexagon to whatever we decide a hex thats selected looks like.
+        /// Currently blue
+        /// </summary>
+        public void SetSelectedColorScheme()
+        {
+            SetColorScheme(Color.LightBlue, Color.Blue);
+        }
+
+        /// <summary>
+        /// Change the color's of the hexagon's wireframe.
+        /// </summary>
         private void SetWireFrameColor()
         {
             for (int i = 0; i < vertices.Length; i++)
@@ -140,22 +188,40 @@ namespace IsoHexEditor
             }
         }
 
-        private Matrix CreateTranslationForHexGrid(int xOffset, int yOffset)
-        {            
-            return Matrix.CreateTranslation(  xOffset * 2 , xOffset % 2 == 0 ? (yOffset * 3) - 1.5f : yOffset * 3, 0);
-        }
 
+        /// <summary>
+        /// Returns the depth of one of the hexagon's vertices.
+        ///    4______3
+        ///    /      \
+        ///  5/        \2
+        ///   \        /
+        ///   0\______/1
+        /// </summary>
         public float GetVertexDepth(int index)
         {
             return vertices[index].Position.Z;
         }
 
+        /// <summary>
+        /// Sets the depth for one of the hexagon's vertices.
+        ///    4______3
+        ///    /      \
+        ///  5/        \2
+        ///   \        /
+        ///   0\______/1
+        /// </summary>
         public void SetVertexDepth(int index, float depth)
         {
             vertices[index].Position.Z = depth;
             mHexTube.SetVertexDepth(index, depth);
         }
 
+        /// <summary>
+        /// Calculates the X and Y position of the bounding sphere based on
+        /// the hexagon's position in the grid. REVISIT to remove magic numbers
+        /// </summary>
+        /// <param name="xOffset">The x position the hex is at in the grid</param>
+        /// <param name="yOffset">The y position the hex is at in the grid</param>
         public void SetBoundingXY(int xOffset, int yOffset)
         {
             mBoundingSphere.Center.X = xOffset * 2;
